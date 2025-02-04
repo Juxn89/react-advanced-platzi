@@ -5,6 +5,10 @@ import { Home } from "./components/Home"
 // import { Settings } from "./components/Settings"
 import { Dashboard } from "./components/Dashboard"
 import { Overview } from "./components/Overview"
+import { Profile } from './components/Profile'
+import { ProtectedRoute } from './components/ProtectedRoute'
+import { NotFound } from './components/NotFound'
+
 const Settings = lazy(() => import('./components/Settings'))
 
 function App() {
@@ -29,6 +33,9 @@ function App() {
 					<li>
 						<Link to={ '/dashboard' }>Dashboard</Link>
 					</li>
+					<li>
+						<Link to={ '/profile' }>Profile</Link>
+					</li>
 				</ul>
 
 				<Routes>
@@ -43,6 +50,12 @@ function App() {
 							</Suspense>
 						 } />
 					</Route>
+					<Route path="/profile" element={
+						<ProtectedRoute isAuthenticated={ true }>
+							<Profile />
+						</ProtectedRoute>
+					}/>
+					<Route path='*' element={ <NotFound /> } />
 				</Routes>
 			</nav>			
 		</div>
