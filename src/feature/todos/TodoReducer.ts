@@ -10,7 +10,7 @@ type TodoState = ToDo[]
 
 const initialState: TodoState = []
 
-const todoReducer = createReducer(initialState, (builder) => {
+export const todoReducer = createReducer(initialState, (builder) => {
 	builder
 		.addCase(addToDo, (state, action) => {
 			const newToDo = { id: state.length + 1, text: action.payload }

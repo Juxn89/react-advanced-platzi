@@ -1,75 +1,48 @@
-import { FC, useReducer, useState } from 'react';
-
-type Todo = {
-	id: number,
-	text: string
-}
-
-type State ={
-	todos: Todo[]
-}
-
-type Action = 
-	| { type: 'ADD_TODO'; payload: string }
-	| { type: 'REMOVE_TODO', payload: number }
-
-const initialState: State = {
-	todos: []
-}
-
-const todoReducer = (state: State, action: Action) => {
-	switch (action.type) {
-		case 'ADD_TODO': {
-			const newTodo: Todo = { id: state.todos.length + 1, text: action.payload }
-			return { todos: [...state.todos, newTodo] }
-		}
-		case 'REMOVE_TODO': {
-			return { todos: state.todos.filter(item => item.id !== action.payload ) }
-		}
-		default:
-			return state
-	}
-}
-
-const emojiMap: { [key: string]: string } = {
-	eat: '🍔',
-	sleep: '🛌🏽',
-	exercise: '🏃🏽‍♂️‍➡️',
-}
+import { FC, useState } from 'react';
+import { useDispatch, useSelector } from 'react-redux';
+import { AppDispatch, RootState } from '../app/store';
+import { addToDo, removeToDo } from '../feature/todos/TodoActions';
 
 export const TodoList: FC = () => {
-	const [state, dispatch] = useReducer(todoReducer, initialState)
 	const [todoText, setTodoText] = useState<string>('')
+	const dispath: AppDispatch = useDispatch()
+	const todos = useSelector((state: RootState) => state.todos)
 
 	const handleAddToDo = () => {
-		const mappedText = emojiMap[todoText.toLowerCase() || todoText]
-		if(mappedText.trim()) {
-			dispatch({ type: 'ADD_TODO', payload: mappedText })
-			setTodoText('')
-		}
+		const mappedText = emojiMap[todoText.toLowerCase()] || todoText
+		dispath(addToDo(mappedText))
+		setTodoText('')
 	}
 
-	const handleKeyDown = (event: KeyboardEvent) => {
-		if(event.key === 'Enter') {
-			handleAddToDo()
-		}
+	const handleRemoveToDo = (id: number) => {
+		dispath( removeToDo(id) )
+	}
+
+	const emojiMap: { [key: string]: string } = {
+		eat: '🍔',
+		sleep: '🛌🏽',
+		exercise: '🏃🏽‍♂️‍➡️'
 	}
 
 	return(
 		<div>
-			<em>Made with useReducer</em>
+			<em>Made with Redux Toolkit</em>
 			<h1>Emoji Todo List</h1>
 			<input
 				type='text'
 				value={ todoText }
 				onChange={ (e) => setTodoText(e.target.value) }
-				onKeyDown={ handleKeyDown }
+				onKeyDown={ (e) => { 
+					if(e.key === 'Enter') {
+						handleAddToDo()
+					}
+				}}
 				placeholder='Add a new ToDo'
 			/>
 			<ul>
 				{
-					state.todos.map(todo => (
-						<li key={todo.id} onClick={ () => dispatch({ type: 'REMOVE_TODO', payload: todo.id }) }>
+					todos.map(todo => (
+						<li key={todo.id} onClick={ () => handleRemoveToDo(todo.id) }>
 							{ todo.text }
 						</li>
 					))
