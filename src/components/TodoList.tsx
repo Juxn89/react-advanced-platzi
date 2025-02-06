@@ -28,7 +28,7 @@ export const TodoList: FC = () => {
 		<div>
 			<em>Made with Redux Toolkit</em>
 			<h1>Emoji Todo List</h1>
-			<input
+			{/* <input
 				type='text'
 				value={ todoText }
 				onChange={ (e) => setTodoText(e.target.value) }
@@ -47,7 +47,7 @@ export const TodoList: FC = () => {
 						</li>
 					))
 				}
-			</ul>
+			</ul> */}
 		</div>
 	)
 }
