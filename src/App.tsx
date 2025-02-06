@@ -1,4 +1,4 @@
-import { ComponentType, Dispatch, SetStateAction } from "react"
+import { ComponentType, Dispatch, SetStateAction, useState } from "react"
 
 interface StateMachineConfig<StateType, StepNames extends string> {
 	initialStep: StepNames,
@@ -62,9 +62,39 @@ type WizardState = {
 
 type StepNames = 'step1' | 'step2' | 'confirmation'
 
-export const App = () => {
+export const StateMachineWizard = () => {
+	const [wizardState, setWizardState] = useState<WizardState>({ name: '', age: 0 })
+	const [currentStep, setCurrentStep] = useState<StepNames>(stateMachineConfig.initialStep)
+
+	const getStateView = <T, V extends string>(
+		config: StateMachineConfig<T, V>, 
+		stepName: V): ComponentType<{ state: T, setState: Dispatch<SetStateAction<T>> }> => config.views[stepName]
+
+	const StepConponent = getStateView(stateMachineConfig, currentStep)
+
+	const handleNextStep = () => {
+		console.log(':)')
+		const canAdvance = stateMachineConfig.steps[currentStep].canAdvance(wizardState)
+
+		if(canAdvance) {
+			if(currentStep === 'step1')
+				setCurrentStep('step2')
+			else if(currentStep === 'step2')
+				setCurrentStep('confirmation')
+			else
+				alert(`You can't move forward yet`)
+		}
+	}
+
 	return(
-		<>
-		</>
+		<section>
+			<h1>✨ State Machine Wizard ✨</h1>
+			<StepConponent state={ wizardState } setState={ setWizardState }/>
+			{
+				currentStep !== 'confirmation' && (
+					<button onClick={ () => handleNextStep() } >Next</button>
+				)
+			}
+		</section>
 	)
 }
