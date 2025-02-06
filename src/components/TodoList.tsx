@@ -1,21 +1,20 @@
 import { FC, useState } from 'react';
-import { useDispatch, useSelector } from 'react-redux';
-import { AppDispatch, RootState } from '../app/store';
-import { addToDo, removeToDo } from '../feature/todos/TodoActions';
+import { useTodoStore } from '../store/useTodoStore';
 
 export const TodoList: FC = () => {
 	const [todoText, setTodoText] = useState<string>('')
-	const dispath: AppDispatch = useDispatch()
-	const todos = useSelector((state: RootState) => state.todos)
+	const todos = useTodoStore( (state) => state.todos )
+	const addToDo = useTodoStore( (state) => state.addTodo )
+	const removeToDo = useTodoStore( (state) => state.removeTodo )
 
 	const handleAddToDo = () => {
 		const mappedText = emojiMap[todoText.toLowerCase()] || todoText
-		dispath(addToDo(mappedText))
+		addToDo(mappedText)
 		setTodoText('')
 	}
 
 	const handleRemoveToDo = (id: number) => {
-		dispath( removeToDo(id) )
+		removeToDo(id)
 	}
 
 	const emojiMap: { [key: string]: string } = {
@@ -26,9 +25,9 @@ export const TodoList: FC = () => {
 
 	return(
 		<div>
-			<em>Made with Redux Toolkit</em>
+			<em>Made with Zusgtand 🦦</em>
 			<h1>Emoji Todo List</h1>
-			{/* <input
+			<input
 				type='text'
 				value={ todoText }
 				onChange={ (e) => setTodoText(e.target.value) }
@@ -47,7 +46,7 @@ export const TodoList: FC = () => {
 						</li>
 					))
 				}
-			</ul> */}
+			</ul>
 		</div>
 	)
 }
