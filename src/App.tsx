@@ -1,4 +1,4 @@
-import { lazy, Suspense, useState, useTransition } from "react"
+import { lazy, Suspense, useMemo, useState, useTransition } from "react"
 import { useCourses } from "./hooks/useCourses"
 
 const CourseList = lazy( () => import('./components/CourseList') )
@@ -9,6 +9,15 @@ export const App = () => {
 
 	const coursesPerPage = 2
 	const [isPending, startTransition] = useTransition()
+
+	const currentCourses = useMemo( () => {
+		if(!courses) return []
+
+		const indexOfLastCourse = currentPage * coursesPerPage
+		const indexOfFirstCourse = indexOfLastCourse - coursesPerPage
+
+		return courses?.slice(indexOfFirstCourse, indexOfLastCourse)
+	}, [courses, currentPage, coursesPerPage] )
 
 	if(isLoading)
 		return <div>Loading...</div>
@@ -21,15 +30,19 @@ export const App = () => {
 
 	return(
 		<section>
-			<h1>✨ TanStack Query ✨</h1>
-			<Suspense fallback={ <p>Loading...</p> }>
-				<CourseList courses={ courses } />
+			<h1>📚 Learning courses | TanStack Query 📚</h1>
+			<Suspense fallback={ <p>Loading courses...</p> }>
+				<CourseList courses={ currentCourses } />
 				<div>
 					{
 						Array.from({ length: Math.ceil(courses.length / coursesPerPage) }, (_, index) => (
 							<button
 								key={ index }
-								onClick={ () => { setCurrentPage(index + 1) } }
+								onClick={ () => { 
+									startTransition( () => {
+										setCurrentPage(index + 1)
+									} )
+								 } }
 							>
 								{ index + 1 }
 							</button>

@@ -1,4 +1,4 @@
-import { FC } from "react"
+import { FC, memo } from "react"
 
 interface Course {
 	id: number,
@@ -7,7 +7,7 @@ interface Course {
 	duration: string
 }
 
-export const CourseList: FC<{ courses: Course[] }> = ({ courses }) => {
+export const CourseList: FC<{ courses: Course[] }> = memo(({ courses }) => {
 	return(
 		<ul>
 			{
@@ -21,6 +21,6 @@ export const CourseList: FC<{ courses: Course[] }> = ({ courses }) => {
 			}
 		</ul>
 	)
-}
+})
 
 export default CourseList
